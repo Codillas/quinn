@@ -1,0 +1,12 @@
+name: Examine Linux prerequisites
+description: Require the compiler tools from the GHA public runner image
+runs:
+  using: composite
+  steps:
+    - name: Examine compiler tools
+      shell: bash
+      run: |
+        set -euo pipefail
+        for tool in cc c++ cmake clang perl go ninja pkg-config; do
+          command -v "$tool"
+        done

@@ -5,16 +5,28 @@ on:
     branches: ['main']
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    runs-on:
+      group: gha-public-publisher-ci
+      labels: [site-gha, os-linux, arch-x64]
     steps:
-      - uses: actions/checkout@v7
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: 'latest'
-      - run: mdbook build ./docs/book
+      - name: Build book
+        run: mdbook build ./docs/book
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
